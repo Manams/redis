@@ -1,0 +1,490 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "redisCacheName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Azure Redis Cache to create."
+      }
+    },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "The pricing tier of the new Azure Redis Cache."
+      }
+    },
+    "redisCacheFamily": {
+      "type": "string",
+      "defaultValue": "C",
+      "allowedValues": [
+        "C",
+        "P"
+      ],
+      "metadata": {
+        "description": "The family for the sku. C for Basic and Standard. P for Premium"
+      }
+    },
+    "redisCacheCapacity": {
+      "type": "int",
+      "allowedValues": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The size of the new Azure Redis Cache instance. C0(250MB) 16db, C1(1GB) 16db, C2(2.5GB) 16db, C3(6GB) 16db, C4(13GB) 32db, C5(26GB) 48db, C6(53GB) 64db, --- P1(6-60GB) 16db, P2 (13-130GB) 32db, P3 (26-260GB) 48db, P4(53-530GB) 64db"
+      }
+    },
+    "enableNonSslPort": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "A boolean value that indicates whether to allow access via non-SSL ports. (SSL port 6380, NonSSL port 6379)"
+      }
+    },
+    "maxMemoryEvictionPolicy": {
+      "type": "string",
+      "allowedValues": [
+        "volatile-lru",
+        "allkeys-lru",
+        "volatile-random",
+        "allkeys-random",
+        "volatile-ttl",
+        "noeviction"
+      ],
+      "defaultValue": "volatile-lru",
+      "metadata": {
+        "description": "The behavior Redis follows when the maxmemory limit is reached (Can be set from Basic and higher). https://redis.io/topics/lru-cache#eviction-policies"
+      }
+    },
+    "maxMemoryReserved": {
+      "type": "string",
+      "defaultValue": "2",
+      "allowedValues": [
+        "0",
+        "2",
+        "50",
+        "100",
+        "150"
+      ],
+      "metadata": {
+        "description": "(Can be set from Standard and higher). "
+      }
+    },
+    "keyspaceNotifications": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Allow clients to receive notifications when certain events occur. (Can be set from Standard and higher). https://redis.io/topics/notifications"
+      }
+    },
+	  "alertDescription": {
+		  "type": "string",
+		  "defaultValue": "This is a metric alert",
+		  "metadata": {
+			  "description": "Description of alert"
+		}
+	},
+	  "actionGroupId": {
+		  "type": "string",
+		  "defaultValue": "",
+		  "metadata": {
+			  "description": "The ID of the action group that is triggered when the alert is activated or deactivated"
+		}
+	},
+	  "alertSeverity1": {
+		  "type": "int",
+		  "defaultValue": 3,
+		  "allowedValues": [
+			  0,
+			  1,
+			  2,
+			  3,
+			  4
+		  ],
+		  "metadata": {
+			  "description": "Severity of alert {0,1,2,3,4}"
+		}
+	},
+	  "isEnabled1": {
+		  "type": "bool",
+		  "defaultValue": true,
+		  "metadata": {
+			  "description": "Specifies whether the alert is enabled"
+		}
+	},
+	  "metricName1": {
+		  "type": "string",
+		  "minLength": 1,
+		  "metadata": {
+			  "description": "Name of the metric used in the comparison to activate the alert."
+		}
+	},
+	  "operator1": {
+		  "type": "string",
+		  "defaultValue": "GreaterThan",
+		  "allowedValues": [
+			  "Equals",
+			  "NotEquals",
+			  "GreaterThan",
+			  "GreaterThanOrEqual",
+			  "LessThan",
+			  "LessThanOrEqual"
+		],
+		  "metadata": {
+			  "description": "Operator comparing the current value with the threshold value."
+		}
+	},
+	  "threshold1": {
+		  "type": "string",
+		  "defaultValue": "0",
+		  "metadata": {
+			  "description": "The threshold value at which the alert is activated."
+		}
+	},
+	  "timeAggregation1": {
+		  "type": "string",
+		  "defaultValue": "Average",
+		  "allowedValues": [
+			  "Average",
+			  "Minimum",
+			  "Maximum",
+			  "Total"
+		],
+		  "metadata": {
+			  "description": "How the data that is collected should be combined over time."
+		}
+	},
+	  "windowSize1": {
+		  "type": "string",
+		  "defaultValue": "PT5M",
+		  "metadata": {
+			  "description": "Period of time used to monitor alert activity based on the threshold. Must be between five minutes and one day. ISO 8601 duration format."
+		}
+	},
+	  "evaluationFrequency1": {
+		  "type": "string",
+		  "defaultValue": "PT1M",
+		  "metadata": {
+			  "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+		}
+	},
+	  "alertSeverity2": {
+		  "type": "int",
+		  "defaultValue": 3,
+		  "allowedValues": [
+			  0,
+			  1,
+			  2,
+			  3,
+			  4
+		],
+		  "metadata": {
+			  "description": "Severity of alert {0,1,2,3,4}"
+		}
+	},
+	  "isEnabled2": {
+		  "type": "bool",
+		  "defaultValue": true,
+		  "metadata": {
+			  "description": "Specifies whether the alert is enabled"
+		}
+	},
+	  "metricName2": {
+		  "type": "string",
+		  "minLength": 1,
+		  "metadata": {
+			  "description": "Name of the metric used in the comparison to activate the alert."
+		}
+	},
+	  "operator2": {
+		  "type": "string",
+		  "defaultValue": "GreaterThan",
+		  "allowedValues": [
+			  "Equals",
+			  "NotEquals",
+			  "GreaterThan",
+			  "GreaterThanOrEqual",
+			  "LessThan",
+			  "LessThanOrEqual"
+		],
+		  "metadata": {
+			  "description": "Operator comparing the current value with the threshold value."
+		}
+	},
+	  "threshold2": {
+		  "type": "string",
+		  "defaultValue": "0",
+		  "metadata": {
+			  "description": "The threshold value at which the alert is activated."
+		}
+	},
+	  "timeAggregation2": {
+		  "type": "string",
+		  "defaultValue": "Average",
+		  "allowedValues": [
+			  "Average",
+			  "Minimum",
+			  "Maximum",
+			  "Total"
+		],
+		  "metadata": {
+			  "description": "How the data that is collected should be combined over time."
+		}
+	},
+	  "windowSize2": {
+		  "type": "string",
+		  "defaultValue": "PT5M",
+		  "metadata": {
+			  "description": "Period of time used to monitor alert activity based on the threshold. Must be between five minutes and one day. ISO 8601 duration format."
+		}
+	},
+	  "evaluationFrequency2": {
+		  "type": "string",
+		  "defaultValue": "PT1M",
+		  "metadata": {
+			  "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+		}
+	},
+	  "alertSeverity3": {
+		  "type": "int",
+		  "defaultValue": 3,
+		  "allowedValues": [
+			  0,
+			  1,
+			  2,
+			  3,
+			  4
+		],
+		  "metadata": {
+			  "description": "Severity of alert {0,1,2,3,4}"
+		}
+	},
+	  "isEnabled3": {
+		  "type": "bool",
+		  "defaultValue": true,
+		  "metadata": {
+			  "description": "Specifies whether the alert is enabled"
+		}
+	},
+	  "metricName3": {
+		  "type": "string",
+		  "minLength": 1,
+		  "metadata": {
+			  "description": "Name of the metric used in the comparison to activate the alert."
+		}
+	},
+	  "operator3": {
+		  "type": "string",
+		  "defaultValue": "GreaterThan",
+		  "allowedValues": [
+			  "Equals",
+			  "NotEquals",
+			  "GreaterThan",
+			  "GreaterThanOrEqual",
+			  "LessThan",
+			  "LessThanOrEqual"
+		],
+		  "metadata": {
+			  "description": "Operator comparing the current value with the threshold value."
+		}
+	},
+	  "threshold3": {
+		  "type": "string",
+		  "defaultValue": "0",
+		  "metadata": {
+			  "description": "The threshold value at which the alert is activated."
+		}
+	},
+	  "timeAggregation3": {
+		  "type": "string",
+		  "defaultValue": "Average",
+		  "allowedValues": [
+			  "Average",
+			  "Minimum",
+			  "Maximum",
+			  "Total"
+		],
+		  "metadata": {
+			  "description": "How the data that is collected should be combined over time."
+		}
+	},
+	  "windowSize3": {
+		  "type": "string",
+		  "defaultValue": "PT5M",
+		  "metadata": {
+			  "description": "Period of time used to monitor alert activity based on the threshold. Must be between five minutes and one day. ISO 8601 duration format."
+		}
+	},
+	  "evaluationFrequency3": {
+		  "type": "string",
+		  "defaultValue": "PT1M",
+		  "metadata": {
+			  "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+		}
+	}
+  },
+  "variables": {
+    "redisCacheName": "[parameters('redisCacheName')]",
+	  "RLGYAlertName1": "[concat('MA-', parameters('redisCacheName'), '-', parameters('MetricName1'))]",
+	  "RLGYAlertName2": "[concat('MA-', parameters('redisCacheName'), '-', parameters('MetricName2'))]",
+	  "RLGYAlertName3": "[concat('MA-', parameters('redisCacheName'), '-', parameters('MetricName3'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('redisCacheName')]",
+      "type": "Microsoft.Cache/Redis",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "enableNonSslPort": "[parameters('enableNonSslPort')]",
+        "sku": {
+          "name": "[parameters('sku')]",
+          "family": "[parameters('redisCacheFamily')]",
+          "capacity": "[parameters('redisCacheCapacity')]"
+        },
+        "redisConfiguration": {
+          "maxmemory-reserved": "[parameters('maxMemoryReserved')]",
+          "maxmemory-delta": "[parameters('maxMemoryReserved')]",
+          "maxmemory-policy": "[parameters('maxMemoryEvictionPolicy')]",
+          "notify-keyspace-events": "[parameters('keyspaceNotifications')]"
+        }
+      }
+    },
+	{
+		"name": "[variables('RLGYAlertName1')]",
+		"type": "Microsoft.Insights/metricAlerts",
+		"location": "global",
+		"apiVersion": "2018-03-01",
+		"tags": {},
+		"properties": {
+			"description": "[parameters('alertDescription')]",
+			"severity": "[parameters('alertSeverity1')]",
+			"enabled": "[parameters('isEnabled1')]",
+			"scopes": ["[concat(ResourceGroup().Id, '/providers/', reference(parameters('redisCacheName'), '2018-03-01', 'full').ResourceId)]"],
+			"evaluationFrequency":"[parameters('evaluationFrequency1')]",
+			"windowSize": "[parameters('windowSize1')]",
+			"criteria": {
+				"odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+				"allOf": [
+					{
+						"name" : "1st criterion",
+						"metricName": "[parameters('metricName1')]",
+						"dimensions":[],   
+						"operator": "[parameters('operator1')]",
+						"threshold" : "[parameters('threshold1')]",
+						"timeAggregation": "[parameters('timeAggregation1')]"
+					}
+				]
+			},
+			"actions": [
+				{
+					"actionGroupId": "[parameters('actionGroupId')]"                
+				}
+			]
+	},
+		"dependsOn": [
+			"[parameters('redisCacheName')]"
+		]
+	},
+	{
+	"name": "[variables('RLGYAlertName2')]",
+		"type": "Microsoft.Insights/metricAlerts",
+		"location": "global",
+		"apiVersion": "2018-03-01",
+		"tags": {},
+		"properties": {
+			"description": "[parameters('alertDescription')]",
+			"severity": "[parameters('alertSeverity2')]",
+			"enabled": "[parameters('isEnabled2')]",
+			"scopes": ["[concat(ResourceGroup().Id, '/providers/', reference(parameters('redisCacheName'), '2018-03-01', 'full').ResourceId)]"],
+			"evaluationFrequency":"[parameters('evaluationFrequency2')]",
+			"windowSize": "[parameters('windowSize2')]",
+			"criteria": {
+				"odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+				"allOf": [
+					{
+						"name" : "1st criterion",
+						"metricName": "[parameters('metricName2')]",
+						"dimensions":[],   
+						"operator": "[parameters('operator2')]",
+						"threshold" : "[parameters('threshold2')]",
+						"timeAggregation": "[parameters('timeAggregation2')]"
+					}
+				]
+			},
+			"actions": [
+				{
+					"actionGroupId": "[parameters('actionGroupId')]"                
+				}
+			]
+	},
+		"dependsOn": [
+			"[parameters('redisCacheName')]"
+		]
+	},
+	{
+	"name": "[variables('RLGYAlertName3')]",
+		"type": "Microsoft.Insights/metricAlerts",
+		"location": "global",
+		"apiVersion": "2018-03-01",
+		"tags": {},
+		"properties": {
+			"description": "[parameters('alertDescription')]",
+			"severity": "[parameters('alertSeverity3')]",
+			"enabled": "[parameters('isEnabled3')]",
+			"scopes": ["[concat(ResourceGroup().Id, '/providers/', reference(parameters('redisCacheName'), '2018-03-01', 'full').ResourceId)]"],
+			"evaluationFrequency":"[parameters('evaluationFrequency3')]",
+			"windowSize": "[parameters('windowSize3')]",
+			"criteria": {
+				"odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+				"allOf": [
+					{
+						"name" : "1st criterion",
+						"metricName": "[parameters('metricName3')]",
+						"dimensions":[],   
+						"operator": "[parameters('operator3')]",
+						"threshold" : "[parameters('threshold3')]",
+						"timeAggregation": "[parameters('timeAggregation3')]"
+					}
+				]
+			},
+			"actions": [
+				{
+					"actionGroupId": "[parameters('actionGroupId')]"                
+				}
+			]
+	},
+		"dependsOn": [
+			"[parameters('redisCacheName')]"
+		]
+	}
+  ],
+  "outputs": {
+    "primaryConnectionString": {
+      "type": "string",
+      "value": "[concat(variables('redisCacheName'),'.redis.cache.windows.net:6380,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', variables('redisCacheName')), '2015-08-01').primaryKey)]"
+    },
+    "redisKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Cache/Redis', variables('redisCacheName')), '2015-08-01').primaryKey]"
+    },
+    "redisName": {
+      "type": "string",
+      "value": "[variables('redisCacheName')]"
+    }
+  }
+}

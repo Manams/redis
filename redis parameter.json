@@ -1,0 +1,81 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "redisCacheName": {
+      "value": "redis-DEV"
+    },
+    "sku": {
+      "value": "Standard"
+    },
+    "redisCacheFamily": {
+      "value": "C"
+    },
+    "redisCacheCapacity": {
+      "value": 1
+    },
+    "enableNonSslPort": {
+      "value": false
+    },
+    "actionGroupId": {
+      "value": " "
+    },
+    "alertDescription": {
+      "value": "Redis Monitor"
+    },
+    "alertSeverity1": {
+      "value":3
+    },
+    "isEnabled1": {
+      "value": false
+    },
+    "metricName1": {
+      "value": "cachemisses"
+    },
+    "operator1": {
+      "value": "GreaterThan"
+    },
+    "threshold1": {
+      "value": "80"
+    },
+    "timeAggregation1": {
+      "value": "Average"
+    },
+    "alertSeverity2": {
+      "value":3
+    },
+    "isEnabled2": {
+      "value": false
+    },
+    "metricName2": {
+      "value": "serverLoad"
+    },
+    "operator2": {
+      "value": "GreaterThan"
+    },
+    "threshold2": {
+      "value": "75"
+    },
+    "timeAggregation2": {
+      "value": "Average"
+    },
+    "alertSeverity3": {
+      "value":3
+    },
+    "isEnabled3": {
+      "value": false
+    },
+    "metricName3": {
+      "value": "percentProcessorTime"
+    },
+    "operator3": {
+      "value": "GreaterThan"
+    },
+    "threshold3": {
+      "value": "75"
+    },
+    "timeAggregation3": {
+      "value": "Average"
+    }
+  }
+}
